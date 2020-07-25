@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_width="wrap_content"
     android:textAppearance="?android:attr/textAppearanceLarge"
-    android:layout_alignParentTop="true"
+    android:layout_alignParentBottom="true"
     android:layout_toStartOf="@+id/fab"
     android:layout_gravity="bottom|right"
     android:id="@+id/textMessage"
