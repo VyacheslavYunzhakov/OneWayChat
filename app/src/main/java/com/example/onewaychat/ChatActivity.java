@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,7 +29,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,8 +48,8 @@ public class ChatActivity extends AppCompatActivity {
     //  public static Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
     public static LinearLayout linearLayoutInScrollView;
     private static final int CAMERA_REQUEST = 0;
-    private ImageView imageFromCamera;
-    private ImageView cameraImageView;
+    private final int Pick_image = 1;
+
     LayoutInflater ltInflater;
     public static ArrayList buttonNames = new ArrayList();
     public static Observable observable;
@@ -61,9 +64,9 @@ public class ChatActivity extends AppCompatActivity {
 
         FloatingActionButton addButton = new FloatingActionButton(this);
         FloatingActionButton messageButton = new FloatingActionButton(this);
+
         RelativeLayout mainRelativeLayout = findViewById(R.id.mainRelativeLayout);
         linearLayoutInScrollView =findViewById(R.id.linearLayoutInScrollView);
-        imageFromCamera = findViewById(R.id.cameraView);
         context = this;
         ChangeButtons changeButtons = new ChangeButtons();
         changeButtons.addAddButton(addButton,mainRelativeLayout);
@@ -81,13 +84,31 @@ public class ChatActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
+                if (s == "Image"){
+                    Log.d("callLogs", "onNext: " + s);
+                    try {
+                        putImage();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
 
             }
+
         };
 
 
 
     }
+
+    private void putImage() throws IOException {
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("image/*");
+        startActivityForResult(photoPickerIntent, Pick_image);
+        ltInflater = getLayoutInflater();
+    }
+
+
     public void takeAPhoto () throws IOException {
 
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -116,6 +137,22 @@ public class ChatActivity extends AppCompatActivity {
             FloatingActionButton addButton = new FloatingActionButton(this);
             ChangeButtons changeButtons = new ChangeButtons();
             changeButtons.addAddButton(addButton, mainRelativeLayout);
+        }
+        if(requestCode == Pick_image && resultCode == RESULT_OK){
+            try {
+
+                //Получаем URI изображения, преобразуем его в Bitmap
+                //объект и отображаем в элементе ImageView нашего интерфейса:
+                View imageLayoutView = ltInflater.inflate(R.layout.imageview, linearLayoutInScrollView, false);
+                ImageView imageView = imageLayoutView.findViewById(R.id.imageView);
+                final Uri imageUri = data.getData();
+                final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                imageView.setImageBitmap(selectedImage);
+                linearLayoutInScrollView.addView(imageView);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
         //else {Log.d("myLogs", "fu");}
     }

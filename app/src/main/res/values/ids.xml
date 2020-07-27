@@ -3,4 +3,5 @@
     <item type="id" name="addButton" />
     <item type="id" name="messageButton" />
     <item type="id" name="cameraButton" />
+    <item name="imageButton" type="id" />
 </resources>
