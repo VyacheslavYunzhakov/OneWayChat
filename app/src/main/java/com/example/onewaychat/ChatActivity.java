@@ -1,14 +1,20 @@
 package com.example.onewaychat;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -45,10 +52,11 @@ public class ChatActivity extends AppCompatActivity {
     public static Context context;
     private Uri photoURI;
 
-    //  public static Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
     public static LinearLayout linearLayoutInScrollView;
     private static final int CAMERA_REQUEST = 0;
     private final int Pick_image = 1;
+    public static Double latiude,longitude;
+    private LocationManager locationManager;
 
     LayoutInflater ltInflater;
     public static ArrayList buttonNames = new ArrayList();
@@ -62,38 +70,51 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        FloatingActionButton addButton = new FloatingActionButton(this);
-        FloatingActionButton messageButton = new FloatingActionButton(this);
 
-        RelativeLayout mainRelativeLayout = findViewById(R.id.mainRelativeLayout);
         linearLayoutInScrollView =findViewById(R.id.linearLayoutInScrollView);
+
         context = this;
+        FloatingActionButton addButton = new FloatingActionButton(this);
+        RelativeLayout mainRelativeLayout = findViewById(R.id.mainRelativeLayout);
         ChangeButtons changeButtons = new ChangeButtons();
         changeButtons.addAddButton(addButton,mainRelativeLayout);
+
+
 
         observable = Observable.from(buttonNames);
 
         action = new Action1<String>() {
             @Override
             public void call(String s) {
-                if (s == "Camera"){
-                    Log.d("callLogs", "onNext: " + s);
+                if (s.equals(Integer.toString(R.drawable.ic_baseline_photo_camera_24))){
                     try {
                         takeAPhoto ();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-                if (s == "Image"){
-                    Log.d("callLogs", "onNext: " + s);
+                if  (s.equals(Integer.toString(R.drawable.ic_baseline_collections_24))){
                     try {
                         putImage();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
+                if  (s.equals(Integer.toString(R.drawable.ic_baseline_near_me_24))){
+                    try {
+                        showLocation();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (s.equals(Integer.toString(R.drawable.ic_baseline_textsms_24))) {
+                    RelativeLayout mainRelativeLayout = findViewById(R.id.mainRelativeLayout);
+                    SendMessage sendMessage = new SendMessage();
+                    sendMessage.sendMessage(mainRelativeLayout);
+                }
 
             }
+
 
         };
 
@@ -101,11 +122,35 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
+    private void showLocation() throws IOException {
+        RelativeLayout mainRelativeLayout = findViewById(R.id.mainRelativeLayout);
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast toast = Toast.makeText(this, "Permission failed", Toast.LENGTH_SHORT);
+            toast.show();
+            startActivity(new Intent(
+                    android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                1000 * 10, 10, locationListener);
+        locationManager.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER, 1000 * 10, 10,
+                locationListener);
+
+        ltInflater = getLayoutInflater();
+        View mapView = ltInflater.inflate(R.layout.sharelocation, linearLayoutInScrollView, false);
+        linearLayoutInScrollView.addView(mapView);
+        addButton();
+    }
+
     private void putImage() throws IOException {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, Pick_image);
         ltInflater = getLayoutInflater();
+        addButton();
     }
 
 
@@ -132,17 +177,10 @@ public class ChatActivity extends AppCompatActivity {
             ImageView cameraImageView = cameraView.findViewById(R.id.cameraView);
             cameraImageView.setImageURI(photoURI);
             linearLayoutInScrollView.addView(cameraView);
-            ChangeButtons.clickCounter++;
-            RelativeLayout mainRelativeLayout = findViewById(R.id.mainRelativeLayout);
-            FloatingActionButton addButton = new FloatingActionButton(this);
-            ChangeButtons changeButtons = new ChangeButtons();
-            changeButtons.addAddButton(addButton, mainRelativeLayout);
+            addButton();
         }
         if(requestCode == Pick_image && resultCode == RESULT_OK){
             try {
-
-                //Получаем URI изображения, преобразуем его в Bitmap
-                //объект и отображаем в элементе ImageView нашего интерфейса:
                 View imageLayoutView = ltInflater.inflate(R.layout.imageview, linearLayoutInScrollView, false);
                 ImageView imageView = imageLayoutView.findViewById(R.id.imageView);
                 final Uri imageUri = data.getData();
@@ -150,6 +188,8 @@ public class ChatActivity extends AppCompatActivity {
                 final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                 imageView.setImageBitmap(selectedImage);
                 linearLayoutInScrollView.addView(imageView);
+                ChangeButtons.clickCounter++;
+                addButton();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -170,6 +210,40 @@ public class ChatActivity extends AppCompatActivity {
         // Save a file: path for use with ACTION_VIEW intents
         String mCurrentPhotoPath = image.getAbsolutePath();
         return image;
+    }
+    private LocationListener locationListener = new LocationListener() {
+
+        @Override
+        public void onLocationChanged(Location location) {
+            latiude = location.getLatitude();
+            longitude = location.getLongitude();
+            Log.d("myLogs", "geo:" + latiude + "," + longitude);
+
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+
+
+    };
+    private void addButton(){
+        RelativeLayout mainRelativeLayout = findViewById(R.id.mainRelativeLayout);
+        FloatingActionButton addButton = new FloatingActionButton(this);
+        ChangeButtons changeButtons = new ChangeButtons();
+        ChangeButtons.clickCounter++;
+        changeButtons.addAddButton(addButton, mainRelativeLayout);
     }
     }
 

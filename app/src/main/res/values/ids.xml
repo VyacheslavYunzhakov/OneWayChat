@@ -4,4 +4,5 @@
     <item type="id" name="messageButton" />
     <item type="id" name="cameraButton" />
     <item name="imageButton" type="id" />
+    <item name="geolocationButton" type="id"/>
 </resources>
