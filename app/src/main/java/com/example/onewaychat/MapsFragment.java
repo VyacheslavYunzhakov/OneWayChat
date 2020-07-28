@@ -5,10 +5,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -36,9 +38,25 @@ public class MapsFragment extends Fragment {
         @Override
         public void onMapReady(GoogleMap googleMap) {
             mMap = googleMap;
-            LatLng yourLocation = new LatLng(latiude, longitude);
-            mMap.addMarker(new MarkerOptions().position(yourLocation).title("you are here"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(yourLocation));
+            waitForGeo();
+            /*
+            if (latiude != null && longitude != null) {
+
+                LatLng yourLocation = new LatLng(latiude, longitude);
+                mMap.addMarker(new MarkerOptions().position(yourLocation).title("you are here"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(yourLocation));
+            } else {
+                Handler handler1 = new Handler();
+                handler1.postDelayed(new Runnable() {
+                    public void run() {
+                        LatLng yourLocation = new LatLng(latiude, longitude);
+                        mMap.addMarker(new MarkerOptions().position(yourLocation).title("you are here"));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(yourLocation));
+                    }
+                }, 5000);
+            }
+
+             */
         }
     };
 
@@ -57,6 +75,20 @@ public class MapsFragment extends Fragment {
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
+        }
+    }
+    private void waitForGeo(){
+        if (latiude != null && longitude != null) {
+            LatLng yourLocation = new LatLng(latiude, longitude);
+            mMap.addMarker(new MarkerOptions().position(yourLocation).title("you are here"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((yourLocation),15));
+        } else {
+            Handler handler1 = new Handler();
+            handler1.postDelayed(new Runnable() {
+                public void run() {
+                    waitForGeo();
+                }
+            }, 1000);
         }
     }
 }

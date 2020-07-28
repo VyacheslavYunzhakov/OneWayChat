@@ -2,6 +2,7 @@ package com.example.onewaychat;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import android.Manifest;
@@ -112,6 +113,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void showLocation() {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast toast = Toast.makeText(this, "Permission failed", Toast.LENGTH_SHORT);
@@ -121,9 +123,9 @@ public class ChatActivity extends AppCompatActivity {
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                1000 * 10, 10, locationListener);
+                1000 * 1, 1, locationListener);
         locationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER, 1000 * 10, 10,
+                LocationManager.NETWORK_PROVIDER, 1000 * 1, 1,
                 locationListener);
 
         ltInflater = getLayoutInflater();
@@ -165,6 +167,9 @@ public class ChatActivity extends AppCompatActivity {
             linearLayoutInScrollView.addView(cameraView);
             addButton();
         }
+        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_CANCELED) {
+            addButton();
+        }
         if(requestCode == Pick_image && resultCode == RESULT_OK){
             try {
                 View imageLayoutView = ltInflater.inflate(R.layout.imageview, linearLayoutInScrollView, false);
@@ -178,6 +183,9 @@ public class ChatActivity extends AppCompatActivity {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
+        }
+        if (requestCode == Pick_image && resultCode == RESULT_CANCELED) {
+            addButton();
         }
     }
     private File createImageFile() throws IOException {
@@ -228,5 +236,18 @@ public class ChatActivity extends AppCompatActivity {
         ChangeButtons.clickCounter++;
         changeButtons.addAddButton(addButton, mainRelativeLayout);
     }
+    /*
+    private void getLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            boolean mLocationPermissionGranted = true;
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
+    }
+    */
     }
 
