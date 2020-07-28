@@ -194,7 +194,6 @@ public class ChatActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        //else {Log.d("myLogs", "fu");}
     }
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -207,7 +206,6 @@ public class ChatActivity extends AppCompatActivity {
                 storageDir      /* directory */
         );
 
-        // Save a file: path for use with ACTION_VIEW intents
         String mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
