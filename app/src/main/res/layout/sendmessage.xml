@@ -27,7 +27,7 @@
         android:clickable="true"
         android:id="@+id/sendMessageButton"
         android:src="@drawable/ic_send_black_24dp"
-        android:tint="#A6000000"
+        android:tint="#FF9800"
         android:backgroundTint="#FFFFFFFF"
         android:layout_alignTop="@+id/textInput"
         android:layout_alignBottom="@+id/textInput"
