@@ -137,7 +137,6 @@ public class ChatActivity extends AppCompatActivity {
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, Pick_image);
         ltInflater = getLayoutInflater();
-        addButton();
     }
 
 
@@ -175,7 +174,6 @@ public class ChatActivity extends AppCompatActivity {
                 final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                 imageView.setImageBitmap(selectedImage);
                 linearLayoutInScrollView.addView(imageView);
-                ChangeButtons.clickCounter++;
                 addButton();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
