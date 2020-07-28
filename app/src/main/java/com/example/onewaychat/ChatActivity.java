@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -22,13 +21,11 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
+
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
+
 import android.widget.Toast;
 
 
@@ -44,7 +41,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import rx.Observable;
-import rx.Observer;
 import rx.functions.Action1;
 
 public class ChatActivity extends AppCompatActivity {
@@ -94,18 +90,10 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 }
                 if  (s.equals(Integer.toString(R.drawable.ic_baseline_collections_24))){
-                    try {
                         putImage();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 }
                 if  (s.equals(Integer.toString(R.drawable.ic_baseline_near_me_24))){
-                    try {
                         showLocation();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 }
                 if (s.equals(Integer.toString(R.drawable.ic_baseline_textsms_24))) {
                     RelativeLayout mainRelativeLayout = findViewById(R.id.mainRelativeLayout);
@@ -122,8 +110,7 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    private void showLocation() throws IOException {
-        RelativeLayout mainRelativeLayout = findViewById(R.id.mainRelativeLayout);
+    private void showLocation() {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -145,7 +132,7 @@ public class ChatActivity extends AppCompatActivity {
         addButton();
     }
 
-    private void putImage() throws IOException {
+    private void putImage() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, Pick_image);
