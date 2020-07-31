@@ -39,7 +39,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import rx.Observable;
 import rx.functions.Action1;
@@ -54,11 +56,17 @@ public class ChatActivity extends AppCompatActivity {
     private final int Pick_image = 1;
     public static Double latiude,longitude;
     private LocationManager locationManager;
+    List<Integer> xmlId = new ArrayList<>();
+    List<Uri> imageUri = new ArrayList<>();
+    List<Integer> itemId = new ArrayList<>();
 
     LayoutInflater ltInflater;
     public static ArrayList buttonNames = new ArrayList();
     public static Observable observable;
     public static Action1<String> action;
+
+    AppDatabase database = App.getInstance().getDatabase();
+    ImageDao imageDao = database.imageDao();
 
 
     @SuppressLint("ResourceType")
@@ -68,11 +76,22 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
 
 
+
+
         linearLayoutInScrollView =findViewById(R.id.linearLayoutInScrollView);
 
         context = this;
         FloatingActionButton addButton = new FloatingActionButton(this);
         RelativeLayout mainRelativeLayout = findViewById(R.id.mainRelativeLayout);
+
+        ltInflater = getLayoutInflater();
+        xmlId = imageDao.getXmlId();
+        imageUri = imageDao.getImageUri();
+        itemId = imageDao.getItemId();
+        for (int i = 0; i < xmlId.size(); i++){
+            loadHistory(imageUri.get(i),itemId.get(i), xmlId.get(i));
+        }
+
         ChangeButtons changeButtons = new ChangeButtons();
         changeButtons.addAddButton(addButton,mainRelativeLayout);
 
@@ -161,9 +180,15 @@ public class ChatActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
-            View cameraView = ltInflater.inflate(R.layout.cameraview, linearLayoutInScrollView, false);
-            ImageView cameraImageView = cameraView.findViewById(R.id.cameraView);
+            View cameraView = ltInflater.inflate(R.layout.imageview, linearLayoutInScrollView, false);
+            ImageView cameraImageView = cameraView.findViewById(R.id.imageView);
             cameraImageView.setImageURI(photoURI);
+            Image image = new Image();
+            image.time =  java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+            image.imageUri = photoURI;
+            image.idOfItem = R.id.imageView;
+            image.idOfXML = R.layout.imageview;
+            database.imageDao().insert(image);
             linearLayoutInScrollView.addView(cameraView);
             addButton();
         }
@@ -236,18 +261,12 @@ public class ChatActivity extends AppCompatActivity {
         ChangeButtons.clickCounter++;
         changeButtons.addAddButton(addButton, mainRelativeLayout);
     }
-    /*
-    private void getLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            boolean mLocationPermissionGranted = true;
-        } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-        }
+    private void loadHistory(Uri imageUri, int viewId, int xmlId){
+        View cameraView = ltInflater.inflate(xmlId, linearLayoutInScrollView, false);
+        ImageView cameraImageView = cameraView.findViewById(viewId);
+        cameraImageView.setImageURI(imageUri);
+        linearLayoutInScrollView.addView(cameraView);
+        addButton();
     }
-    */
     }
 

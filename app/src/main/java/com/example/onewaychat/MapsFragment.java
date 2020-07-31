@@ -39,24 +39,6 @@ public class MapsFragment extends Fragment {
         public void onMapReady(GoogleMap googleMap) {
             mMap = googleMap;
             waitForGeo();
-            /*
-            if (latiude != null && longitude != null) {
-
-                LatLng yourLocation = new LatLng(latiude, longitude);
-                mMap.addMarker(new MarkerOptions().position(yourLocation).title("you are here"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(yourLocation));
-            } else {
-                Handler handler1 = new Handler();
-                handler1.postDelayed(new Runnable() {
-                    public void run() {
-                        LatLng yourLocation = new LatLng(latiude, longitude);
-                        mMap.addMarker(new MarkerOptions().position(yourLocation).title("you are here"));
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(yourLocation));
-                    }
-                }, 5000);
-            }
-
-             */
         }
     };
 
