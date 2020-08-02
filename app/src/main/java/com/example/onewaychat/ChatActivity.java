@@ -2,7 +2,6 @@ package com.example.onewaychat;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import android.Manifest;
@@ -11,7 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -34,12 +33,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -50,15 +48,19 @@ public class ChatActivity extends AppCompatActivity {
 
     public static Context context;
     private Uri photoURI;
+    private Uri imageURI;
 
     public static LinearLayout linearLayoutInScrollView;
     private static final int CAMERA_REQUEST = 0;
     private final int Pick_image = 1;
+
     public static Double latiude,longitude;
     private LocationManager locationManager;
-    List<Integer> xmlId = new ArrayList<>();
-    List<Uri> imageUri = new ArrayList<>();
-    List<Integer> itemId = new ArrayList<>();
+    List<Integer> itemXmlIdList = new ArrayList<>();
+    List<String> itemTextOrUriList = new ArrayList<>();
+    List<String> itemTypeList = new ArrayList<>();
+    List<Integer> itemViewIdList = new ArrayList<>();
+
 
     LayoutInflater ltInflater;
     public static ArrayList buttonNames = new ArrayList();
@@ -67,16 +69,18 @@ public class ChatActivity extends AppCompatActivity {
 
     AppDatabase database = App.getInstance().getDatabase();
     ImageDao imageDao = database.imageDao();
+    TextDao textDao = database.textDao();
+    ItemDao itemDao = database.itemDao();
 
+    OutputStream outputStream;
+
+    History history = new History();
 
     @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
-
-
 
         linearLayoutInScrollView =findViewById(R.id.linearLayoutInScrollView);
 
@@ -85,11 +89,15 @@ public class ChatActivity extends AppCompatActivity {
         RelativeLayout mainRelativeLayout = findViewById(R.id.mainRelativeLayout);
 
         ltInflater = getLayoutInflater();
-        xmlId = imageDao.getXmlId();
-        imageUri = imageDao.getImageUri();
-        itemId = imageDao.getItemId();
-        for (int i = 0; i < xmlId.size(); i++){
-            loadHistory(imageUri.get(i),itemId.get(i), xmlId.get(i));
+        //imageDao.clearTable();
+        itemTextOrUriList = database.itemDao().getTextOrUri();
+        itemViewIdList = database.itemDao().getViewId();
+        itemXmlIdList = database.itemDao().getXmlId();
+        itemTypeList = database.itemDao().getType();
+
+        //Log.d ("loadLogs", "" + xmlId.size());
+        for (int i = 0; i < itemXmlIdList.size(); i++){
+            history.loadHistory(itemTextOrUriList.get(i), itemViewIdList.get(i), itemXmlIdList.get(i), itemTypeList.get(i));
         }
 
         ChangeButtons changeButtons = new ChangeButtons();
@@ -110,7 +118,11 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 }
                 if  (s.equals(Integer.toString(R.drawable.ic_baseline_collections_24))){
+                    try {
                         putImage();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 if  (s.equals(Integer.toString(R.drawable.ic_baseline_near_me_24))){
                         showLocation();
@@ -153,7 +165,7 @@ public class ChatActivity extends AppCompatActivity {
         addButton();
     }
 
-    private void putImage() {
+    private void putImage() throws IOException {// throws IOException {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, Pick_image);
@@ -183,12 +195,8 @@ public class ChatActivity extends AppCompatActivity {
             View cameraView = ltInflater.inflate(R.layout.imageview, linearLayoutInScrollView, false);
             ImageView cameraImageView = cameraView.findViewById(R.id.imageView);
             cameraImageView.setImageURI(photoURI);
-            Image image = new Image();
-            image.time =  java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
-            image.imageUri = photoURI;
-            image.idOfItem = R.id.imageView;
-            image.idOfXML = R.layout.imageview;
-            database.imageDao().insert(image);
+            history.saveHistory(photoURI, R.id.imageView, R.layout.imageview, "camera");
+            Log.d("cameraURI", "" + photoURI);
             linearLayoutInScrollView.addView(cameraView);
             addButton();
         }
@@ -196,25 +204,31 @@ public class ChatActivity extends AppCompatActivity {
             addButton();
         }
         if(requestCode == Pick_image && resultCode == RESULT_OK){
+            View imageLayoutView = ltInflater.inflate(R.layout.imageview, linearLayoutInScrollView, false);
+            ImageView imageView = imageLayoutView.findViewById(R.id.imageView);
+            final Uri imageUri = data.getData();
+            imageView.setImageURI(imageUri);
+            BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
+            Bitmap bitmap = drawable.getBitmap();
             try {
-                View imageLayoutView = ltInflater.inflate(R.layout.imageview, linearLayoutInScrollView, false);
-                ImageView imageView = imageLayoutView.findViewById(R.id.imageView);
-                final Uri imageUri = data.getData();
-                final InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                imageView.setImageBitmap(selectedImage);
-                linearLayoutInScrollView.addView(imageView);
-                addButton();
-            } catch (FileNotFoundException e) {
+                File imageFile = createImageFile();
+                FileOutputStream out = new FileOutputStream(imageFile);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                imageURI = FileProvider.getUriForFile(this,
+                        "com.example.onewaychat.fileprovider",
+                        imageFile);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
+            history.saveHistory(imageURI, R.id.imageView, R.layout.imageview, "image");
+            linearLayoutInScrollView.addView(imageView);
+            addButton();
         }
         if (requestCode == Pick_image && resultCode == RESULT_CANCELED) {
             addButton();
         }
     }
     private File createImageFile() throws IOException {
-        // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -260,13 +274,6 @@ public class ChatActivity extends AppCompatActivity {
         ChangeButtons changeButtons = new ChangeButtons();
         ChangeButtons.clickCounter++;
         changeButtons.addAddButton(addButton, mainRelativeLayout);
-    }
-    private void loadHistory(Uri imageUri, int viewId, int xmlId){
-        View cameraView = ltInflater.inflate(xmlId, linearLayoutInScrollView, false);
-        ImageView cameraImageView = cameraView.findViewById(viewId);
-        cameraImageView.setImageURI(imageUri);
-        linearLayoutInScrollView.addView(cameraView);
-        addButton();
     }
     }
 

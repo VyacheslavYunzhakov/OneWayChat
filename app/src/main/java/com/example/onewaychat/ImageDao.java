@@ -23,9 +23,16 @@ public interface ImageDao {
     @TypeConverters({UriConverters.class})
    // Flowable<List<Uri>> getImageUri();
     List<Uri> getImageUri();
-    @Query("SELECT item_id FROM (SELECT * FROM image ORDER BY time)")
+    @Query("SELECT image_id FROM (SELECT * FROM image ORDER BY time)")
    // Flowable<List<Integer>> getItemId();
     List<Integer> getItemId();
+
+    @Query("SELECT type FROM (SELECT * FROM image ORDER BY time)")
+        // Flowable<List<Integer>> getItemId();
+    List<String> getType();
+
+    @Query("DELETE FROM image")
+    void clearTable();
 
     @Insert
     void insert(Image image);

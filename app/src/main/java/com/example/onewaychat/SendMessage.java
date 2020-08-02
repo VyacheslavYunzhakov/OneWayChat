@@ -31,6 +31,7 @@ public class SendMessage extends AppCompatActivity  {
     Context context;
     LayoutInflater ltInflater;
     //LinearLayout linearLayoutInScrollView;
+    History history = new History();
 
     public void sendMessage(final RelativeLayout mainRelativeLayout) {
 
@@ -59,6 +60,7 @@ public class SendMessage extends AppCompatActivity  {
 
                         textMessage.setText(sendText.getText());
                         Log.d("Size","" + text.getWidth());
+                        history.saveHistory("" + textMessage.getText(), R.id.textMessage, R.layout.text, "text");
                         sendText.setText("");
                         linearLayoutInScrollView.addView(text);
                         FloatingActionButton addButton = new FloatingActionButton(context);

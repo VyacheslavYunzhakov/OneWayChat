@@ -17,9 +17,11 @@ public class Image {
     @TypeConverters({UriConverters.class})
     public  Uri imageUri;
 
+    public String type;
+
     @ColumnInfo(name = "xml_id")
     public int idOfXML;
 
-    @ColumnInfo(name = "item_id")
-    public int idOfItem;
+    @ColumnInfo(name = "image_id")
+    public int idOfImage;
 }

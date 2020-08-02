@@ -1,20 +1,20 @@
 package com.example.onewaychat;
 
-
-import android.view.View;
+import android.net.Uri;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 @Entity
-public class Item {
+public class Text {
     @PrimaryKey(autoGenerate = true)
     public long id;
 
     public String time;
 
-    public String text_or_uri;
+    public String text;
 
     public String type;
 
@@ -23,5 +23,4 @@ public class Item {
 
     @ColumnInfo(name = "view_id")
     public int idOfView;
-
 }
