@@ -13,6 +13,10 @@ import java.util.List;
 
 @Dao
 public interface TextDao {
+
+    @Query("DELETE FROM text")
+    void clearTable();
+
     @Query("SELECT xml_id FROM (SELECT * FROM text ORDER BY time)")
         // Flowable<List<Integer>> getXmlId();
     List<Integer> getXmlId();
@@ -30,8 +34,6 @@ public interface TextDao {
         // Flowable<List<Integer>> getItemId();
     List<String> getType();
 
-    @Query("DELETE FROM image")
-    void clearTable();
 
     @Insert
     void insert(Text text);

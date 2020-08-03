@@ -14,7 +14,9 @@ import android.widget.TextView;
 import java.text.DateFormat;
 import java.util.Calendar;
 
+import static com.example.onewaychat.ChatActivity.addButton;
 import static com.example.onewaychat.ChatActivity.linearLayoutInScrollView;
+import static com.example.onewaychat.ChatActivity.mapView;
 
 public class History {
     Context context;
@@ -23,8 +25,11 @@ public class History {
 
     public void loadHistory(String text_or_uri, int viewId, int xmlId, String type) {
             this.context = ChatActivity.context;
+            View view = null;
             LayoutInflater ltInflater = LayoutInflater.from(context);
-            View view = ltInflater.inflate(xmlId, linearLayoutInScrollView, false);
+            if (!type.equals("location")) {
+                view = ltInflater.inflate(xmlId, linearLayoutInScrollView, false);
+            }
             if (type.equals("image") || type.equals("camera")) {
                 ImageView cameraImageView = view.findViewById(viewId);
                 Uri imageUri = Uri.parse(text_or_uri);
@@ -35,6 +40,12 @@ public class History {
                 TextView textMessage = view.findViewById(R.id.textMessage);
                 textMessage.setText(text_or_uri);
                 linearLayoutInScrollView.addView(view);
+            }
+            if (type.equals("location")){
+                ChatActivity chatActivity = new ChatActivity();
+                ChangeButtons.clickCounter++;
+                ChatActivity.buttonNames.add(Integer.toString(R.drawable.ic_baseline_near_me_24));
+                ChatActivity.observable.subscribe(ChatActivity.action);
             }
         }
 
@@ -56,6 +67,17 @@ public class History {
         text1.idOfXML = xmlId;
         text1.type = type;
         database.textDao().insert(text1);
+    }
+    public void saveHistory(String type){
+        Map map = new Map();
+        database.mapDao().clearTable();
+        map.time = DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+        map.idOfView = 0;
+        map.idOfXML = 0;
+        map.text_or_uri = "";
+        map.type = type;
+        database.mapDao().insert(map);
+
     }
 
 }

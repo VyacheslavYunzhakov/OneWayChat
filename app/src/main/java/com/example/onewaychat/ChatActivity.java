@@ -22,10 +22,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import android.view.ViewManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 
@@ -61,18 +63,19 @@ public class ChatActivity extends AppCompatActivity {
     List<String> itemTypeList = new ArrayList<>();
     List<Integer> itemViewIdList = new ArrayList<>();
 
+    public static FloatingActionButton addButton;
+    RelativeLayout mainRelativeLayout;
 
     LayoutInflater ltInflater;
     public static ArrayList buttonNames = new ArrayList();
     public static Observable observable;
     public static Action1<String> action;
 
-    AppDatabase database = App.getInstance().getDatabase();
-    ImageDao imageDao = database.imageDao();
-    TextDao textDao = database.textDao();
-    ItemDao itemDao = database.itemDao();
+    public ScrollView scrollView;
 
-    OutputStream outputStream;
+    public static View mapView;
+
+    AppDatabase database = App.getInstance().getDatabase();
 
     History history = new History();
 
@@ -82,28 +85,18 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        scrollView = findViewById(R.id.scrollView);
         linearLayoutInScrollView =findViewById(R.id.linearLayoutInScrollView);
 
         context = this;
-        FloatingActionButton addButton = new FloatingActionButton(this);
-        RelativeLayout mainRelativeLayout = findViewById(R.id.mainRelativeLayout);
-
-        ltInflater = getLayoutInflater();
-        //imageDao.clearTable();
-        itemTextOrUriList = database.itemDao().getTextOrUri();
-        itemViewIdList = database.itemDao().getViewId();
-        itemXmlIdList = database.itemDao().getXmlId();
-        itemTypeList = database.itemDao().getType();
-
-        //Log.d ("loadLogs", "" + xmlId.size());
-        for (int i = 0; i < itemXmlIdList.size(); i++){
-            history.loadHistory(itemTextOrUriList.get(i), itemViewIdList.get(i), itemXmlIdList.get(i), itemTypeList.get(i));
-        }
+        addButton = new FloatingActionButton(this);
+        mainRelativeLayout = findViewById(R.id.mainRelativeLayout);
 
         ChangeButtons changeButtons = new ChangeButtons();
         changeButtons.addAddButton(addButton,mainRelativeLayout);
 
-
+        ltInflater = getLayoutInflater();
+        mapView = ltInflater.inflate(R.layout.sharelocation, linearLayoutInScrollView, false);
 
         observable = Observable.from(buttonNames);
 
@@ -139,10 +132,21 @@ public class ChatActivity extends AppCompatActivity {
         };
 
 
+        //database.textDao().clearTable();
+        itemTextOrUriList = database.itemDao().getTextOrUri();
+        itemViewIdList = database.itemDao().getViewId();
+        itemXmlIdList = database.itemDao().getXmlId();
+        itemTypeList = database.itemDao().getType();
+
+        Log.d ("loadLogs", "" + itemXmlIdList.size());
+        for (int i = 0; i < itemXmlIdList.size(); i++){
+            history.loadHistory(itemTextOrUriList.get(i), itemViewIdList.get(i), itemXmlIdList.get(i), itemTypeList.get(i));
+        }
+
 
     }
 
-    private void showLocation() {
+    public void showLocation() {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -153,15 +157,28 @@ public class ChatActivity extends AppCompatActivity {
                     android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
             return;
         }
+
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 1000 * 1, 1, locationListener);
         locationManager.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER, 1000 * 1, 1,
                 locationListener);
 
-        ltInflater = getLayoutInflater();
-        View mapView = ltInflater.inflate(R.layout.sharelocation, linearLayoutInScrollView, false);
+
+        try {
+            linearLayoutInScrollView.removeView(mapView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         linearLayoutInScrollView.addView(mapView);
+        history.saveHistory("location");
+        try {
+            mainRelativeLayout.removeView(addButton);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        scrollDialogDown();
         addButton();
     }
 
@@ -227,6 +244,7 @@ public class ChatActivity extends AppCompatActivity {
         if (requestCode == Pick_image && resultCode == RESULT_CANCELED) {
             addButton();
         }
+        scrollDialogDown();
     }
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -274,6 +292,17 @@ public class ChatActivity extends AppCompatActivity {
         ChangeButtons changeButtons = new ChangeButtons();
         ChangeButtons.clickCounter++;
         changeButtons.addAddButton(addButton, mainRelativeLayout);
+    }
+
+    public void scrollDialogDown() {
+        scrollView.post(new Runnable() {
+
+            @Override
+            public void run() {
+                scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
+
     }
     }
 

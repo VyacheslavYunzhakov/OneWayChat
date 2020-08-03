@@ -19,7 +19,7 @@ public class ChangeButtons extends AppCompatActivity {
     static int additionalMargin = 180;
     public static int clickCounter = 0;
     private static int counterForMarginForButtons = 1;
-    ArrayList<FloatingActionButton> buttonsContainer = new ArrayList<>();
+    public static ArrayList<FloatingActionButton> buttonsContainer = new ArrayList<>();
 
 
     public void addAddButton(final FloatingActionButton addButton, final RelativeLayout mainRelativeLayout) {

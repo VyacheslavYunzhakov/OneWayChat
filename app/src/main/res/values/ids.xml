@@ -5,4 +5,5 @@
     <item type="id" name="cameraButton" />
     <item name="imageButton" type="id" />
     <item name="geolocationButton" type="id"/>
+    <item name="locationMessage" type="id"/>
 </resources>

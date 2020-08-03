@@ -21,9 +21,13 @@ public interface ItemDao {
  //   @Query("SELECT item_id FROM (SELECT * FROM item ORDER BY time)")
 //    List<Integer> getIdOfXML();
 
+    @Query("DELETE FROM item")
+    void clearTable();
     @Query("SELECT id, time, imageUri as text_or_uri, type, xml_id, image_id as view_id FROM image"  +
             " UNION ALL " +
             "SELECT id, time, text as text_or_uri, type, xml_id, view_id as view_id FROM text "+
+            " UNION ALL " +
+            "SELECT id, time, text_or_uri, type, xml_id, view_id as view_id FROM map "+
             "ORDER BY time")
     List<Item> getAll();
 
@@ -31,6 +35,8 @@ public interface ItemDao {
             "SELECT id, time, imageUri as text_or_uri, type, xml_id, image_id as view_id FROM image"  +
             " UNION ALL " +
             "SELECT id, time, text as text_or_uri, type, xml_id, view_id as view_id FROM text "+
+            " UNION ALL " +
+            "SELECT id, time, text_or_uri, type, xml_id, view_id as view_id FROM map "+
             "ORDER BY time)")
     List<Integer> getXmlId();
 
@@ -38,6 +44,8 @@ public interface ItemDao {
             "SELECT id, time, imageUri as text_or_uri, type, xml_id, image_id as view_id FROM image"  +
             " UNION ALL " +
             "SELECT id, time, text as text_or_uri, type, xml_id, view_id as view_id FROM text "+
+            " UNION ALL " +
+            "SELECT id, time, text_or_uri, type, xml_id, view_id as view_id FROM map "+
             "ORDER BY time)")
     @TypeConverters({UriConverters.class})
     List<String> getTextOrUri();
@@ -46,6 +54,8 @@ public interface ItemDao {
             "SELECT id, time, imageUri as text_or_uri, type, xml_id, image_id as view_id FROM image"  +
             " UNION ALL " +
             "SELECT id, time, text as text_or_uri, type, xml_id, view_id as view_id FROM text "+
+            " UNION ALL " +
+            "SELECT id, time, text_or_uri, type, xml_id, view_id as view_id FROM map "+
             "ORDER BY time)")
     List<Integer> getViewId();
 
@@ -53,6 +63,8 @@ public interface ItemDao {
             "SELECT id, time, imageUri as text_or_uri, type, xml_id, image_id as view_id FROM image"  +
             " UNION ALL " +
             "SELECT id, time, text as text_or_uri, type, xml_id, view_id as view_id FROM text "+
+            " UNION ALL " +
+            "SELECT id, time, text_or_uri, type, xml_id, view_id as view_id FROM map "+
             "ORDER BY time)")
     List<String> getType();
 

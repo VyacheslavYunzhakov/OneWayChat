@@ -60,12 +60,25 @@ public class App extends Application {
                     "view_id INTEGER NOT NULL DEFAULT 1)");
         }
     };
+    public static final Migration MIGRATION_4_5 = new Migration(4, 5) {
+
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE map (" +
+                    "id INTEGER PRIMARY KEY NOT NULL," +
+                    "time TEXT," +
+                    "text_or_uri TEXT," +
+                    "type TEXT," +
+                    "xml_id INTEGER NOT NULL DEFAULT 1," +
+                    "view_id INTEGER NOT NULL DEFAULT 1)");
+        }
+    };
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
         database = Room.databaseBuilder(this, AppDatabase.class, "database")
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                   .allowMainThreadQueries()
                   .build();
     }
