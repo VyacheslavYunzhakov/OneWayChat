@@ -1,4 +1,4 @@
-package com.example.onewaychat;
+package com.example.onewaychat.SendActions;
 
 import android.content.Context;
 import android.util.Log;
@@ -10,20 +10,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.ColumnInfo;
-import androidx.room.Dao;
-import androidx.room.Delete;
-import androidx.room.Entity;
-import androidx.room.Insert;
-import androidx.room.PrimaryKey;
-import androidx.room.Query;
-import androidx.room.Update;
 
+
+import com.example.onewaychat.chat.ChangeButtons;
+import com.example.onewaychat.chat.ChatActivity;
+import com.example.onewaychat.hystoryRoom.History;
+import com.example.onewaychat.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.List;
-
-import static com.example.onewaychat.ChatActivity.linearLayoutInScrollView;
+import static com.example.onewaychat.chat.ChatActivity.linearLayoutInScrollView;
 
 public class SendMessage extends AppCompatActivity  {
 
@@ -63,11 +58,18 @@ public class SendMessage extends AppCompatActivity  {
                         history.saveHistory("" + textMessage.getText(), R.id.textMessage, R.layout.text, "text");
                         sendText.setText("");
                         linearLayoutInScrollView.addView(text);
+                        if (ChatActivity.buttonNames.size() == 1){
+                            ChatActivity.buttonNames.remove(0);
+                        }
+                        ChatActivity.buttonNames.add("Scroll it");
+                        ChatActivity.observable.subscribe(ChatActivity.action);
                         FloatingActionButton addButton = new FloatingActionButton(context);
                         mainRelativeLayout.removeView(sendMessage);
                         ChangeButtons.clickCounter++;
                         ChangeButtons changeButtons = new ChangeButtons();
-                        changeButtons.addAddButton(addButton, mainRelativeLayout);
+                        //changeButtons.addAddButton(addButton, mainRelativeLayout);
+                        changeButtons.setContext(context);
+                        changeButtons.addAddButton(mainRelativeLayout);
                 }
             }
         });

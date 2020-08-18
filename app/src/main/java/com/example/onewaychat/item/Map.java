@@ -1,14 +1,12 @@
-package com.example.onewaychat;
-
-
-import android.view.View;
+package com.example.onewaychat.item;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity
-public class Item {
+public class Map {
+
     @PrimaryKey(autoGenerate = true)
     public long id;
 
@@ -23,5 +21,4 @@ public class Item {
 
     @ColumnInfo(name = "view_id")
     public int idOfView;
-
 }

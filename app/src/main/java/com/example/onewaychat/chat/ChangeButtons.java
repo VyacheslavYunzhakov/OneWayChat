@@ -1,5 +1,6 @@
-package com.example.onewaychat;
+package com.example.onewaychat.chat;
 
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.widget.RelativeLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import com.example.onewaychat.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -20,18 +22,22 @@ public class ChangeButtons extends AppCompatActivity {
     public static int clickCounter = 0;
     private static int counterForMarginForButtons = 1;
     public static ArrayList<FloatingActionButton> buttonsContainer = new ArrayList<>();
+    Context chatActivityContext;
 
 
-    public void addAddButton(final FloatingActionButton addButton, final RelativeLayout mainRelativeLayout) {
+   // public void addAddButton(final FloatingActionButton addButton, final RelativeLayout mainRelativeLayout) {
 
+    public void addAddButton(final RelativeLayout mainRelativeLayout) {
+
+        final FloatingActionButton addButton = new FloatingActionButton(chatActivityContext);
         buttonsContainer.add(addButton);
-        final FloatingActionButton messageButton = new FloatingActionButton(ChatActivity.context);
+        final FloatingActionButton messageButton = new FloatingActionButton(chatActivityContext);
         buttonsContainer.add(messageButton);
-        final FloatingActionButton cameraButton = new FloatingActionButton(ChatActivity.context);
+        final FloatingActionButton cameraButton = new FloatingActionButton(chatActivityContext);
         buttonsContainer.add(cameraButton);
-        final FloatingActionButton imageButton = new FloatingActionButton(ChatActivity.context);
+        final FloatingActionButton imageButton = new FloatingActionButton(chatActivityContext);
         buttonsContainer.add(imageButton);
-        final FloatingActionButton geolocationButton = new FloatingActionButton(ChatActivity.context);
+        final FloatingActionButton geolocationButton = new FloatingActionButton(chatActivityContext);
         buttonsContainer.add(geolocationButton);
 
 
@@ -106,7 +112,9 @@ public class ChangeButtons extends AppCompatActivity {
         });
     }
 
-
+    public void setContext(Context context){
+        chatActivityContext = context;
+    }
 
 
 }

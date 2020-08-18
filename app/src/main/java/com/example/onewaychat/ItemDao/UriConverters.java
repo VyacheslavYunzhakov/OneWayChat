@@ -1,4 +1,4 @@
-package com.example.onewaychat;
+package com.example.onewaychat.ItemDao;
 
 import android.net.Uri;
 

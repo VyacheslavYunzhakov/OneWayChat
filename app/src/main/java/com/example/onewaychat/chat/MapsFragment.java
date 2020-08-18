@@ -1,4 +1,4 @@
-package com.example.onewaychat;
+package com.example.onewaychat.chat;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.onewaychat.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -17,8 +18,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import static com.example.onewaychat.ChatActivity.latiude;
-import static com.example.onewaychat.ChatActivity.longitude;
+import static com.example.onewaychat.SendActions.SendLocation.latitude;
+import static com.example.onewaychat.SendActions.SendLocation.longitude;
 
 public class MapsFragment extends Fragment {
     private GoogleMap mMap;
@@ -62,8 +63,8 @@ public class MapsFragment extends Fragment {
         }
     }
     private void waitForGeo(){
-        if (latiude != null && longitude != null) {
-            LatLng yourLocation = new LatLng(latiude, longitude);
+        if (latitude != null && longitude != null) {
+            LatLng yourLocation = new LatLng(latitude, longitude);
             mMap.addMarker(new MarkerOptions().position(yourLocation).title("you are here"));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((yourLocation),15));
         } else {

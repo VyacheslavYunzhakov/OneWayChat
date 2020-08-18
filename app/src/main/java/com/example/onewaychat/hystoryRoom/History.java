@@ -1,9 +1,6 @@
-package com.example.onewaychat;
+package com.example.onewaychat.hystoryRoom;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,12 +8,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import com.example.onewaychat.chat.ChatActivity;
+import com.example.onewaychat.ItemDao.ImageDao;
+import com.example.onewaychat.R;
+import com.example.onewaychat.database.App;
+import com.example.onewaychat.database.AppDatabase;
+import com.example.onewaychat.item.Coordinates;
+import com.example.onewaychat.item.Image;
+import com.example.onewaychat.item.Map;
+import com.example.onewaychat.item.Text;
+
 import java.text.DateFormat;
 import java.util.Calendar;
 
-import static com.example.onewaychat.ChatActivity.addButton;
-import static com.example.onewaychat.ChatActivity.linearLayoutInScrollView;
-import static com.example.onewaychat.ChatActivity.mapView;
+import static com.example.onewaychat.chat.ChatActivity.linearLayoutInScrollView;
+import static com.example.onewaychat.chat.ChatActivity.mapView;
+import static com.example.onewaychat.SendActions.SendLocation.latitude;
+import static com.example.onewaychat.SendActions.SendLocation.longitude;
 
 public class History {
     Context context;
@@ -42,10 +50,9 @@ public class History {
                 linearLayoutInScrollView.addView(view);
             }
             if (type.equals("location")){
-                ChatActivity chatActivity = new ChatActivity();
-                ChangeButtons.clickCounter++;
-                ChatActivity.buttonNames.add(Integer.toString(R.drawable.ic_baseline_near_me_24));
-                ChatActivity.observable.subscribe(ChatActivity.action);
+                latitude = database.coordinatesDao().getLatitude();
+                longitude = database.coordinatesDao().getLongitude();
+                linearLayoutInScrollView.addView(mapView);
             }
         }
 
@@ -77,6 +84,11 @@ public class History {
         map.text_or_uri = "";
         map.type = type;
         database.mapDao().insert(map);
+        Coordinates coordinates = new Coordinates();
+        database.coordinatesDao().clearTable();
+        coordinates.latitude = latitude;
+        coordinates.longitude = longitude;
+        database.coordinatesDao().insert(coordinates);
 
     }
 

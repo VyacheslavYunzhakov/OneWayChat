@@ -1,8 +1,5 @@
-package com.example.onewaychat;
+package com.example.onewaychat.ItemDao;
 
-
-import android.net.Uri;
-import android.view.View;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -10,6 +7,8 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.TypeConverters;
 import androidx.room.Update;
+
+import com.example.onewaychat.item.Item;
 
 import java.util.List;
 

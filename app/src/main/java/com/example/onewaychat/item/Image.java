@@ -1,4 +1,4 @@
-package com.example.onewaychat;
+package com.example.onewaychat.item;
 
 import android.net.Uri;
 
@@ -6,6 +6,8 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
+
+import com.example.onewaychat.ItemDao.UriConverters;
 
 @Entity
 public class Image {

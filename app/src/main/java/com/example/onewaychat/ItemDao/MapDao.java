@@ -1,9 +1,10 @@
-package com.example.onewaychat;
+package com.example.onewaychat.ItemDao;
 
-import androidx.appcompat.graphics.drawable.DrawerArrowDrawable;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+
+import com.example.onewaychat.item.Map;
 
 @Dao
 public interface MapDao {

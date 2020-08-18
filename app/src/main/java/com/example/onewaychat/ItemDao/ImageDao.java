@@ -1,4 +1,4 @@
-package com.example.onewaychat;
+package com.example.onewaychat.ItemDao;
 
 import android.net.Uri;
 
@@ -9,12 +9,13 @@ import androidx.room.Query;
 import androidx.room.TypeConverters;
 import androidx.room.Update;
 
-import java.util.List;
+import com.example.onewaychat.item.Image;
 
-import io.reactivex.Flowable;
+import java.util.List;
 
 @Dao
 public interface ImageDao {
+
     @Query("SELECT xml_id FROM (SELECT * FROM image ORDER BY time)")
    // Flowable<List<Integer>> getXmlId();
     List<Integer> getXmlId();

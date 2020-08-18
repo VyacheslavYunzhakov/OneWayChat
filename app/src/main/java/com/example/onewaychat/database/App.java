@@ -1,4 +1,4 @@
-package com.example.onewaychat;
+package com.example.onewaychat.database;
 
 import android.app.Application;
 
@@ -73,12 +73,22 @@ public class App extends Application {
                     "view_id INTEGER NOT NULL DEFAULT 1)");
         }
     };
+    public static final Migration MIGRATION_5_6 = new Migration(5, 6) {
+
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE coordinates (" +
+                    "id INTEGER PRIMARY KEY NOT NULL," +
+                    "latitude DOUBLE NOT NULL DEFAULT 1," +
+                    "longitude DOUBLE NOT NULL DEFAULT 1)");
+        }
+    };
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
         database = Room.databaseBuilder(this, AppDatabase.class, "database")
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
                   .allowMainThreadQueries()
                   .build();
     }

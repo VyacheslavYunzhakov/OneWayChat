@@ -1,18 +1,20 @@
-package com.example.onewaychat;
+package com.example.onewaychat.item;
+
+import android.net.Uri;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 @Entity
-public class Map {
-
+public class Text {
     @PrimaryKey(autoGenerate = true)
     public long id;
 
-    String time;
+    public String time;
 
-    public String text_or_uri;
+    public String text;
 
     public String type;
 

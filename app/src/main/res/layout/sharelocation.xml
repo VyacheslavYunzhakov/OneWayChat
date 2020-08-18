@@ -10,7 +10,7 @@
     <fragment
         android:layout_width="250dp"
         android:layout_height="200dp"
-        android:name="com.example.onewaychat.MapsFragment"
+        android:name="com.example.onewaychat.chat.MapsFragment"
         android:id="@+id/fragment"
         android:layout_gravity="bottom|right"
         >
