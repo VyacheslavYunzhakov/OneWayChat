@@ -17,6 +17,7 @@ public class LoadHistoryFromDatabase {
     List<Integer> itemViewIdList = new ArrayList<>();
     History history = new History();
     public void loadHistoryFromDatabase() {
+       // database.itemDao().clearTable();
         itemTextOrUriList = database.itemDao().getTextOrUri();
         itemViewIdList = database.itemDao().getViewId();
         itemXmlIdList = database.itemDao().getXmlId();

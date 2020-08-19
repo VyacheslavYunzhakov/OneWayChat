@@ -13,10 +13,10 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
 import com.example.onewaychat.R;
-import com.example.onewaychat.SendActions.SendImage;
-import com.example.onewaychat.SendActions.SendLocation;
-import com.example.onewaychat.SendActions.SendMessage;
-import com.example.onewaychat.SendActions.SendPhoto;
+import com.example.onewaychat.sendactions.SendImage;
+import com.example.onewaychat.sendactions.SendLocation;
+import com.example.onewaychat.sendactions.SendMessage;
+import com.example.onewaychat.sendactions.SendPhoto;
 import com.example.onewaychat.hystoryRoom.LoadHistoryFromDatabase;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.io.IOException;

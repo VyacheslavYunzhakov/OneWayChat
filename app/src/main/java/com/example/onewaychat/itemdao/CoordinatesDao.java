@@ -1,4 +1,4 @@
-package com.example.onewaychat.ItemDao;
+package com.example.onewaychat.itemdao;
 
 import androidx.room.Dao;
 import androidx.room.Insert;

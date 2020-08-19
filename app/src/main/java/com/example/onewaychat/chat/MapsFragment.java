@@ -18,8 +18,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import static com.example.onewaychat.SendActions.SendLocation.latitude;
-import static com.example.onewaychat.SendActions.SendLocation.longitude;
+import static com.example.onewaychat.sendactions.SendLocation.latitude;
+import static com.example.onewaychat.sendactions.SendLocation.longitude;
 
 public class MapsFragment extends Fragment {
     private GoogleMap mMap;

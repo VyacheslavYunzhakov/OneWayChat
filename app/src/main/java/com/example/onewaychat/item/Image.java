@@ -7,7 +7,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.example.onewaychat.ItemDao.UriConverters;
+import com.example.onewaychat.itemdao.UriConverters;
 
 @Entity
 public class Image {

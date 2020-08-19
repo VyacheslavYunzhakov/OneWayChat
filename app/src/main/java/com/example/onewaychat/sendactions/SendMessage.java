@@ -1,4 +1,4 @@
-package com.example.onewaychat.SendActions;
+package com.example.onewaychat.sendactions;
 
 import android.content.Context;
 import android.util.Log;

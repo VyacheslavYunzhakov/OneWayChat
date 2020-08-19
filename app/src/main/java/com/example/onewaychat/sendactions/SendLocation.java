@@ -1,4 +1,4 @@
-package com.example.onewaychat.SendActions;
+package com.example.onewaychat.sendactions;
 
 import android.Manifest;
 import android.content.Context;

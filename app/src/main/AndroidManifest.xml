@@ -60,7 +60,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".SendActions.SendPhoto">
+        <activity android:name=".sendactions.SendPhoto">
         </activity>
         <activity android:name=".chat.ChatActivity">
             <intent-filter>

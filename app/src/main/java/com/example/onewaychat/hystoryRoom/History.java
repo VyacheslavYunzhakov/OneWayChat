@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 
 import com.example.onewaychat.chat.ChatActivity;
-import com.example.onewaychat.ItemDao.ImageDao;
+import com.example.onewaychat.itemdao.ImageDao;
 import com.example.onewaychat.R;
 import com.example.onewaychat.database.App;
 import com.example.onewaychat.database.AppDatabase;
@@ -23,8 +23,8 @@ import java.util.Calendar;
 
 import static com.example.onewaychat.chat.ChatActivity.linearLayoutInScrollView;
 import static com.example.onewaychat.chat.ChatActivity.mapView;
-import static com.example.onewaychat.SendActions.SendLocation.latitude;
-import static com.example.onewaychat.SendActions.SendLocation.longitude;
+import static com.example.onewaychat.sendactions.SendLocation.latitude;
+import static com.example.onewaychat.sendactions.SendLocation.longitude;
 
 public class History {
     Context context;

@@ -1,11 +1,13 @@
-package com.example.onewaychat.SendActions;
+package com.example.onewaychat.sendactions;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -38,12 +40,26 @@ public class SendImage extends AppCompatActivity {
     }
 
 
+    @SuppressLint("CutPasteId")
     public void sendImageToChat(Intent data) {
+        final int imageOrienationLayout;
+        ImageView imageViewInLayout;
+
         View imageLayoutView = ltInflater.inflate(R.layout.imageview, linearLayoutInScrollView, false);
-        ImageView imageView = imageLayoutView.findViewById(R.id.imageView);
+        final ImageView imageView = imageLayoutView.findViewById(R.id.imageView);
         final Uri imageUri = data.getData();
         imageView.setImageURI(imageUri);
         BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
+        //Log.d("myLogs", "drawable.getIntrinsicHeight()" + drawable.getIntrinsicHeight() +
+        //        ", drawable.getIntrinsicWidth()" + drawable.getIntrinsicWidth());
+        if (drawable.getIntrinsicHeight() >drawable.getIntrinsicWidth()){
+            imageOrienationLayout = R.layout.imageview;
+            imageViewInLayout = imageView;
+        } else {imageOrienationLayout = R.layout.horizontalimageview;
+            imageLayoutView = ltInflater.inflate(R.layout.horizontalimageview, linearLayoutInScrollView, false);
+            imageViewInLayout = imageLayoutView.findViewById(R.id.imageView);
+            imageViewInLayout.setImageURI(imageUri);
+        }
         Bitmap bitmap = drawable.getBitmap();
         try {
             File imageFile = createImageFile();
@@ -55,9 +71,11 @@ public class SendImage extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        history.saveHistory(imageURI, R.id.imageView, R.layout.imageview, "image");
-        linearLayoutInScrollView.addView(imageView);
+
+        history.saveHistory(imageURI, R.id.imageView, imageOrienationLayout, "image");
+        linearLayoutInScrollView.addView(imageViewInLayout);
     }
+
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
